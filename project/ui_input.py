@@ -124,15 +124,15 @@ def user_input():
 
     return render_template('inputs.html', form = form,
     query_history = UserInput.query.order_by(UserInput.created_on.desc()).all(),
-    queries=queries)
+    queries=queries, content_title = "Valuation Engine")
 
 
 
-@valuation_bp.route("/tables")
-@login_required
-def tables():
-    """List users with DataTables <= 1.10.x."""
-    return render_template('tables.html', project='tables')
+# @valuation_bp.route("/tables")
+# @login_required
+# def tables():
+#     """List users with DataTables <= 1.10.x."""
+#     return render_template('tables.html', project='tables')
 
 
 

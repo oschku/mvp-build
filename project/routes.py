@@ -25,9 +25,8 @@ def dashboard():
     """Logged-in User Dashboard."""
     session.permanent = True
     return render_template(
-        'test.html',
-        title='Valuation engine',
-        content_title='Valuation engine',
+        'base.html',
+        title='Home page',
         template='dashboard-template',
         current_user=current_user,
         body="VALU/AI"
@@ -52,3 +51,7 @@ def eur(value):
     return format_currency(value, 'EUR', locale='fi_FI')
 
 app.jinja_env.filters['eur'] = eur
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html")
