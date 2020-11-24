@@ -117,13 +117,13 @@
                                     <th></th>
                                     <th>Osoite</th>
                                     <th>Kunta</th>
+                                    <th>Postinumero</th>
                                     <th>Asuntotyyppi</th>
                                     <th>Asuinala</th>
                                     <th>Rakennusvuosi</th>
                                     <th>Kunto</th>
-                                    <th>Unixtime</th>
                                     <th>Haettu</th>
-                                    <th>Dummy</th>
+                                    <th>Hinta</th>
                                     <th>Hinta</th>
                                 </tr>
                             </thead>
@@ -167,14 +167,74 @@
 <script type="text/javascript" charset="utf-8">
     function format(d) {
         // `d` is the original data object for the row
+
+        // Sauna
+        if (d[10] == 1) {
+            var d1 = 'Kyllä'
+        } else {
+            var d1 = 'Ei'
+        }
+        // Parveke
+        if (d[11] == 1) {
+            var d2 = 'Kyllä'
+        } else {
+            var d2 = 'Ei'
+        }
+        // Hissi
+        if (d[12] == 1) {
+            var d3 = 'Kyllä'
+        } else {
+            var d3 = 'Ei'
+        }
+        // Vuokrattu
+        if (d[13] == 1) {
+            var d4 = 'Kyllä'
+        } else {
+            var d4 = 'Ei'
+        }
+
         return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
             '<tr>' +
-            '<td>Lisätieto1:</td>' +
-            '<td>' + d[1] + '</td>' +
+            '<td>Kerros:</td>' +
+            '<td>' + d[18] + '/' + d[19] + '</td>' +
             '</tr>' +
             '<tr>' +
-            '<td>Lisätieto2:</td>' +
-            '<td>' + d[2] + '</td>' +
+            '<tr>' +
+            '<td>Huoneita:</td>' +
+            '<td>' + d[17] + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>Sauna:</td>' +
+            '<td>' + d1 + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>Parveke:</td>' +
+            '<td>' + d2 + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>Hissi:</td>' +
+            '<td>' + d3 + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>Onko vuokrattu:</td>' +
+            '<td>' + d4 + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>Vastike:</td>' +
+            '<td>' + Intl.NumberFormat('fi-FI', {
+                style: 'currency',
+                currency: 'EUR',
+                maximumSignificantDigits: 3,
+            }).format(d[14]) + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<tr>' +
+            '<td>Tonttiala:</td>' +
+            '<td>' + d[15] + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>Muu kerrosala:</td>' +
+            '<td>' + d[16] + '</td>' +
             '</tr>' +
             '<tr>' +
             '<td>Extra info:</td>' +
@@ -191,28 +251,13 @@
         $.fn.dataTable.moment('dd.MM.YYYY HH:mm');
 
         var table = $('#tables').DataTable({
-            "processing": true,
-            "serverSide": true,
+            "bSrocessing": true,
+            "bServerSide": true,
             "ajax": "{{ url_for('valuation_bp.data') }}",
             'scrollX': true,
             "lengthMenu": [
                 [15, 25, 50, -1],
                 [15, 25, 50, "All"]
-            ],
-            "columnDefs": [{
-                'orderData': [6],
-                'targets': [7]
-
-            }, {
-                "targets": [7, 9],
-                "visible": false,
-                "searchable": false
-            }, {
-                "targets": [6, 7, 8],
-                "type": "num"
-            }],
-            "order": [
-                [7, "desc"]
             ],
             'columns': [{
                 "className": 'details-control',
@@ -269,7 +314,15 @@
                         return data;
                     }
                 }
-            }]
+            }],
+            "order": [
+                [8, "desc"]
+            ],
+            "columnDefs": [{
+                "targets": [9],
+                "visible": false,
+                "searchable": false
+            }],
 
         });
 

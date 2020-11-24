@@ -146,35 +146,55 @@ def data():
 
     """Return server side data."""
     # defining columns
+    # NOTE: DO NOT CHANGE THE ORDER!!!!
     columns = [
         ColumnDT(UserInput.osoite),
         ColumnDT(UserInput.kunta),
+        ColumnDT(UserInput.postinumero),
         ColumnDT(UserInput.asuntotyyppi),
         ColumnDT(UserInput.asuinala),
         ColumnDT(UserInput.rakennusvuosi),
         ColumnDT(UserInput.kunto),
         ColumnDT(UserInput.created_on),
         ColumnDT(UserInput.rakennusvuosi),
-        ColumnDT(UserInput.rakennusvuosi),
-        ColumnDT(UserInput.hinta),        
+        ColumnDT(UserInput.hinta),
+        ColumnDT(UserInput.sauna),
+        ColumnDT(UserInput.parveke),
+        ColumnDT(UserInput.hissi),
+        ColumnDT(UserInput.vuokrattu),
+        ColumnDT(UserInput.vastike),
+        ColumnDT(UserInput.tonttiala),
+        ColumnDT(UserInput.muu_kerrosala),
+        ColumnDT(UserInput.huone_lkm),
+        ColumnDT(UserInput.kerros),
+        ColumnDT(UserInput.kerros_yht),      
     ]
 
     # Query the users data by filtering with the user id
-    #query = UserInput.query.filter(text('user_input.user::integer = :id')).params(id = current_user.id)
     query = db.session.query().select_from(UserInput).filter(text('user_input.user::integer = :id')).params(id = current_user.id)
+
 
     # GET parameters
     params = request.args.to_dict()
 
+    # Lambda function to shift params order by magnitude of 1:
+    new_order = lambda x:  int(x) - 1 if x else None   
+    update_sort = {'order[0][column]': str(new_order(params['order[0][column]']))}
+
     # Lambda to take care of missing data in price column:
     null_check = lambda x : int(Decimal(x)) if x else 'Hakuvirhe'
 
+    # Update column order if order has been requested:
+    if new_order(params['order[0][column]']) >= 0:
+        params.update(update_sort)
+
+    
     # instantiating a DataTable for the query and table needed
     rowTable = DataTables(params, query, columns)
 
     for item in rowTable.output_result()['data']:
-        item['7'] = str(item['6'].strftime("%d.%m.%Y %H:%M"))
-        item['6'] = int((item['6'] - dt(1970, 1, 1)).total_seconds()) #UNIX Timestamp
+        item['8'] = int((item['7'] - dt(1970, 1, 1)).total_seconds()) #UNIX Timestamp
+        item['7'] = str(item['7'].strftime("%d.%m.%Y %H:%M"))
         item['9'] = null_check(item['9'])
         
 
