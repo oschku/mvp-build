@@ -167,7 +167,8 @@ def data():
         ColumnDT(UserInput.muu_kerrosala),
         ColumnDT(UserInput.huone_lkm),
         ColumnDT(UserInput.kerros),
-        ColumnDT(UserInput.kerros_yht),      
+        ColumnDT(UserInput.kerros_yht), 
+        ColumnDT(UserInput.tontti)       
     ]
 
     # Query the users data by filtering with the user id
