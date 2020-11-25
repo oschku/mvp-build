@@ -140,30 +140,18 @@
 <div class="row"></div>
 
 
-
-<!-- <div class="cssload-dots">
-    <div class="cssload-dot"></div>
-    <div class="cssload-dot"></div>
-    <div class="cssload-dot"></div>
-    <div class="cssload-dot"></div>
-    <div class="cssload-dot"></div>
-</div> -->
-<!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="12" ></feGaussianBlur>
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0	0 1 0 0 0	0 0 1 0 0	0 0 0 18 -7" result="goo" ></feColorMatrix>
-      </filter>
-    </defs>
-  </svg> -->
-
-
-
 {% endblock %} {% block additionalscripts %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/forms.css') }}" rel="stylesheet" type="text/css">
 <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 <script src="//cdn.datatables.net/plug-ins/1.10.20/sorting/datetime-moment.js"></script>
+
+
+
+<script src="{{ url_for('static', filename='js/loader.js') }}"></script>
+
+
 <script type="text/javascript" charset="utf-8">
     function format(d) {
         // `d` is the original data object for the row
@@ -255,10 +243,15 @@
         $.fn.dataTable.moment('dd.MM.YYYY HH:mm');
 
         var table = $('#tables').DataTable({
-            "bSrocessing": true,
+            "bProcessing": true,
             "bServerSide": true,
             "ajax": "{{ url_for('valuation_bp.data') }}",
             'scrollX': true,
+            'language': {
+                'emptyTable': 'No data available in table',
+                'processing': '<span><div class="cssload-dots"><div class="cssload-dot"></div><div class="cssload-dot"></div><div class="cssload-dot"></div><div class="cssload-dot"></div><div class="cssload-dot"></div></div><svg version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="12" ></feGaussianBlur><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0	0 1 0 0 0	0 0 1 0 0	0 0 0 18 -7" result="goo" ></feColorMatrix></filter></defs></span>'
+
+            },
             "lengthMenu": [
                 [15, 25, 50, -1],
                 [15, 25, 50, "All"]
@@ -350,23 +343,9 @@
 </script>
 
 <script>
-    function onReady(callback) {
-        var intervalId = window.setInterval(function() {
-            if (document.getElementsByTagName('body')[0] !== undefined) {
-                window.clearInterval(intervalId);
-                callback.call(this);
-            }
-        }, 1000);
-    }
-
-    function setVisible(selector, visible) {
-        document.querySelector(selector).style.display = visible ? 'block' : 'none';
-    }
-
-    onReady(function() {
-        setVisible('.form', true);
-        setVisible('#cssload-dots', false);
-    });
 </script>
+
+
+
 
 {% endblock %}

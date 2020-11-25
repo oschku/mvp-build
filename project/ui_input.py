@@ -12,6 +12,7 @@ from .bin import valuation
 from sqlalchemy import text
 from datatables import ColumnDT, DataTables
 from decimal import Decimal
+from time import sleep
 
 
 def randStr(chars = string.ascii_uppercase + string.digits, N=10):
@@ -200,6 +201,10 @@ def data():
         
 
     # returns what is needed by DataTable
+    # Sleep function added for first draw of data (enables loading animation to be seen)
+
+    if params['draw'] == '1':
+        sleep(2)
     return jsonify(rowTable.output_result())
 
 
