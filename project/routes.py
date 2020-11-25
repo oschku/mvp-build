@@ -25,7 +25,7 @@ def dashboard():
     """Logged-in User Dashboard."""
     session.permanent = True
     return render_template(
-        'base.html',
+        'dashboard.html',
         title='Home page',
         template='dashboard-template',
         current_user=current_user,

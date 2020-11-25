@@ -13,8 +13,16 @@ from sqlalchemy import text
 from datatables import ColumnDT, DataTables
 from decimal import Decimal
 from time import sleep
+import plotly.express as px
+from pathlib import Path
+import os
+
+# Read mapbox access token
+wdir = Path(__file__).parent.absolute()
+px.set_mapbox_access_token(open(os.path.join(wdir, "data", "mb.mapbox_token")).read())
 
 
+# Key generator for query id's
 def randStr(chars = string.ascii_uppercase + string.digits, N=10):
 	return ''.join(random.choice(chars) for _ in range(N))
 
@@ -41,10 +49,8 @@ def user_input():
     form = UiForm(obj=UserInput)
     print(session['last_login'])
 
-    if form.validate():
-        print('Validation successful')
 
-
+    # USER INPUT FORM AND VALUATION CALCULATION
     if form.validate() and form.is_submitted():
         query_id = randStr()
 
@@ -123,21 +129,20 @@ def user_input():
         return redirect('/valuation')
     
 
+  
+    
+
+
+
+
+    
+
     return render_template('inputs.html', form = form,
     query_history = UserInput.query.order_by(UserInput.created_on.desc()).all(),
     queries=queries, content_title = "Valuation Engine")
 
 
-
-# @valuation_bp.route("/tables")
-# @login_required
-# def tables():
-#     """List users with DataTables <= 1.10.x."""
-#     return render_template('tables.html', project='tables')
-
-
-
-
+   
 
 
 @valuation_bp.route('/data', methods=['GET', 'POST'])
@@ -169,7 +174,8 @@ def data():
         ColumnDT(UserInput.huone_lkm),
         ColumnDT(UserInput.kerros),
         ColumnDT(UserInput.kerros_yht), 
-        ColumnDT(UserInput.tontti)       
+        ColumnDT(UserInput.tontti),
+        ColumnDT(UserInput.query_id)       
     ]
 
     # Query the users data by filtering with the user id
@@ -208,6 +214,30 @@ def data():
     return jsonify(rowTable.output_result())
 
 
+@valuation_bp.route('/map', methods=['GET', 'POST'])
+@login_required
+
+def map():
+    
+    # Plotly maps integration
+
+
+
+    # Use sample data in mapbox
+    # TODO Update the df to contain only the coordinates that are in question for a given child row in the 
+    # datatables element
+
+    params = request.args.to_dict()
+
+    template_path = os.path.join(valuation_bp.root_path, valuation_bp.template_folder)
+
+    df = px.data.carshare()
+    fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
+                  color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10)
+    fig.write_html(os.path.join(template_path, 'datatable_map.html'))
+
+
+    return render_template('map.html', maps=open(os.path.join(valuation_bp.root_path, valuation_bp.template_folder, "datatable_map.html")).read())
 
 
    
