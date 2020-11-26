@@ -13,14 +13,21 @@ from sqlalchemy import text
 from datatables import ColumnDT, DataTables
 from decimal import Decimal
 from time import sleep
+import plotly
 import plotly.express as px
+import plotly.graph_objs as go
 from pathlib import Path
 import os
+import pandas as pd
+import json
+
+
+
 
 # Read mapbox access token
 wdir = Path(__file__).parent.absolute()
 px.set_mapbox_access_token(open(os.path.join(wdir, "data", "mb.mapbox_token")).read())
-
+mapbox_access_token = open(os.path.join(wdir, "data", "mb.mapbox_token")).read()
 
 # Key generator for query id's
 def randStr(chars = string.ascii_uppercase + string.digits, N=10):
@@ -214,6 +221,67 @@ def data():
     return jsonify(rowTable.output_result())
 
 
+
+def create_map(lat, lng):
+
+    
+    site_lat = [lat]
+    site_lon = [lng]
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scattermapbox(
+            lat=site_lat,
+            lon=site_lon,
+            mode='markers',
+            marker=go.scattermapbox.Marker(
+                size=17,
+                color='rgb(255, 0, 0)',
+                opacity=0.7
+            ),
+            text = 'kohde',
+            hoverinfo='text'
+        ))
+
+    fig.add_trace(go.Scattermapbox(
+            lat=site_lat,
+            lon=site_lon,
+            mode='markers',
+            marker=go.scattermapbox.Marker(
+                size=8,
+                color='rgb(242, 177, 172)',
+                opacity=0.7
+            ),
+            hoverinfo='none'
+        ))
+
+    fig.update_layout(
+        autosize=True,
+        hovermode='closest',
+        showlegend=False,
+        mapbox=dict(
+            accesstoken=mapbox_access_token,
+            bearing=0,
+            pitch=0,
+            center=dict(
+            lat=lat,
+            lon=lng
+        ),
+            zoom=11,
+            style='light'
+        ),
+        margin = dict(l=20, r=20, t=20, b=20)
+    )
+    
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return graphJSON
+
+
+
+
+
+
 @valuation_bp.route('/map', methods=['GET', 'POST'])
 @login_required
 
@@ -229,15 +297,31 @@ def map():
 
     params = request.args.to_dict()
 
-    template_path = os.path.join(valuation_bp.root_path, valuation_bp.template_folder)
+    # template_path = os.path.join(valuation_bp.root_path, valuation_bp.template_folder)
 
-    df = px.data.carshare()
-    fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
-                  color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10)
-    fig.write_html(os.path.join(template_path, 'datatable_map.html'))
+    # df = px.data.carshare()
+    # fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
+    #               color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10)
+    # fig.write_html(os.path.join(template_path, 'datatable_map.html'))
 
 
-    return render_template('map.html', maps=open(os.path.join(valuation_bp.root_path, valuation_bp.template_folder, "datatable_map.html")).read())
+    query_id = params['query_id']
+    query = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()
+
+    address = query.osoite
+    city = query.kunta
+
+    lat,lng = valuation.geodata.geocode(address, city)
+
+    graphJSON= create_map(lat, lng)
+
+
+
+
+    return graphJSON
+
+
+    # return render_template('map.html', maps=open(os.path.join(valuation_bp.root_path, valuation_bp.template_folder, "datatable_map.html")).read())
 
 
    
