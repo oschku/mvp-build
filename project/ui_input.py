@@ -20,6 +20,7 @@ from pathlib import Path
 import os
 import pandas as pd
 import json
+from statistics import mean
 
 
 
@@ -47,6 +48,9 @@ valuation_bp = Blueprint(
 
 
 def user_input():
+
+    params = request.args.to_dict()
+
     session.permanent = True
     page = request.args.get('page', 1, type = int)
       
@@ -83,7 +87,9 @@ def user_input():
             created_on=dt.now(),
             user=int(current_user.id),
             query_id = query_id,
-            hinta = None)
+            hinta = None,
+            lat = None,
+            lng = None)
 
         db.session.add(user_form_input)
         db.session.commit()
@@ -92,12 +98,21 @@ def user_input():
             hinta = valuation.calculate(UserInput, query_id)[0]
             hinta = float(hinta)
             hinta = round(hinta, -3)
+            lat,lng = valuation.geodata.geocode(form.ui_osoite.data, form.ui_kunta.data)
 
         
             
             db.session.execute(
                 text("UPDATE user_input SET hinta=:param2 WHERE query_id=:param1"),
                 params = {"param2":hinta, "param1":query_id}
+            )
+            db.session.execute(
+                text("UPDATE user_input SET lng=:param2 WHERE query_id=:param1"),
+                params = {"param2":lng, "param1":query_id}
+            )
+            db.session.execute(
+                text("UPDATE user_input SET lat=:param2 WHERE query_id=:param1"),
+                params = {"param2":lat, "param1":query_id}
             )
             db.session.commit()
         
@@ -137,16 +152,71 @@ def user_input():
     
 
   
-    
+    if 'action' in params:
+        query_id = params['query_id']
+        query_pop = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()
+        
+        
+        data_dict = query_pop.__dict__
+        data_dict.pop('_sa_instance_state')
 
+        
 
+        form = UiForm(obj=UserInput)
+        user_form_prepop = UserInput(
+            osoite = query_pop.osoite,
+            kunta = query_pop.kunta,
+            postinumero = query_pop.postinumero,
+            asuntotyyppi = query_pop.asuntotyyppi,
+            asuinala = query_pop.asuinala,
+            rakennusvuosi = query_pop.rakennusvuosi,
+            huone_lkm = query_pop.huone_lkm,
+            kerros = query_pop.kerros,
+            kerros_yht = query_pop.kerros_yht,
+            kunto = query_pop.kunto,
+            tontti = query_pop.tontti,
+            vastike = query_pop.vastike,
+            vuokrattu = query_pop.vuokrattu,
+            hissi = query_pop.hissi,
+            sauna = query_pop.sauna,
+            parveke = query_pop.parveke,
+            tonttiala = query_pop.tonttiala,
+            muu_kerrosala = query_pop.muu_kerrosala,
+            created_on=query_pop.created_on,
+            user=query_pop.user,
+            query_id = query_pop.query_id,
+            hinta = query_pop.hinta,
+            lat = query_pop.lat,
+            lng = query_pop.lng)
 
+        db.session.add(user_form_prepop)
+        form.populate_obj(UserInput)
+        form.ui_osoite.data = 'TEST'
+        # form.ui_osoite.data = query_pop.osoite
+        # form.ui_kunta.data,
+        # form.ui_postinumero.data,
+        # form.ui_asuntotyyppi.data,
+        # form.ui_asuinala.data,
+        # form.ui_rakennusvuosi.data,
+        # form.ui_huone_lkm.data,
+        # form.ui_kerros.data,
+        # form.ui_kerros_yht.data,
+        # form.ui_kunto.data,
+        # form.ui_tontti.data,
+        # form.ui_vastike.data,
+        # form.ui_vuokrattu.data,
+        # form.ui_hissi.data,
+        # form.ui_sauna.data,
+        # form.ui_parveke.data,
+        # form.ui_tonttiala.data,
+        # form.ui_muu_kerrosala.data)
+        # for field, q in zip(form, data_dict):
+        #     field.data = q
 
-    
+        
+   
 
-    return render_template('inputs.html', form = form,
-    query_history = UserInput.query.order_by(UserInput.created_on.desc()).all(),
-    queries=queries, content_title = "Valuation Engine")
+    return render_template('inputs.html', form = form, content_title = "Valuation Engine")
 
 
    
@@ -225,14 +295,13 @@ def data():
 def create_map(lat, lng):
 
     
-    site_lat = [lat]
-    site_lon = [lng]
+    
 
     fig = go.Figure()
 
     fig.add_trace(go.Scattermapbox(
-            lat=site_lat,
-            lon=site_lon,
+            lat=lat,
+            lon=lng,
             mode='markers',
             marker=go.scattermapbox.Marker(
                 size=17,
@@ -244,8 +313,8 @@ def create_map(lat, lng):
         ))
 
     fig.add_trace(go.Scattermapbox(
-            lat=site_lat,
-            lon=site_lon,
+            lat=lat,
+            lon=lng,
             mode='markers',
             marker=go.scattermapbox.Marker(
                 size=8,
@@ -264,11 +333,11 @@ def create_map(lat, lng):
             bearing=0,
             pitch=0,
             center=dict(
-            lat=lat,
-            lon=lng
+            lat=mean(lat),
+            lon=mean(lng)
         ),
             zoom=11,
-            style='light'
+            style='mapbox://styles/axwdigital/ckhx9p6b002ra19nsd4ry1cz9'
         ),
         margin = dict(l=20, r=20, t=20, b=20)
     )
@@ -306,14 +375,24 @@ def map():
 
 
     query_id = params['query_id']
-    query = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()
+    lat_ = []
+    lng_ = []
 
-    address = query.osoite
-    city = query.kunta
+    if query_id != 'all':
+        query = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()
+        lat = float(query.lat)
+        lng = float(query.lng)
+        lat_.append(lat)
+        lng_.append(lng)
+    else:
+        query = db.session.query(UserInput).all()
+        for row in query:
+            lat = float(row.lat)
+            lng = float(row.lng)
+            lat_.append(lat)
+            lng_.append(lng)
 
-    lat,lng = valuation.geodata.geocode(address, city)
-
-    graphJSON= create_map(lat, lng)
+    graphJSON= create_map(lat_, lng_)
 
 
 

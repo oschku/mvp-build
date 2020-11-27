@@ -86,6 +86,8 @@ class UserInput(db.Model):
 	user = db.Column(db.String, nullable = False)
 	query_id = db.Column(db.String(10), nullable=False)
 	hinta = db.Column(db.Numeric, nullable=True)
+	lat = db.Column(db.Numeric, nullable = True)
+	lng = db.Column(db.Numeric, nullable = True)
 	
 
 

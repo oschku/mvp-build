@@ -136,18 +136,6 @@
     </div>
 </div>
 
-<!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<div class="row">
-    <div id="map_TGQDUN9V2Q2">
-        <script type="text/javascript">
-            var rows = document.querySelectorAll('[id^=map]');
-            if (rows.length > 0) {
-                var graphs = "{{plot | safe}}";
-                Plotly.plot(rows[0], graphs, {});
-            }
-        </script>
-    </div>
-</div> -->
 
 {% endblock %} {% block additionalscripts %}
 
@@ -243,6 +231,9 @@
             '<tr>' +
             '<td>Muu kerrosala:</td>' +
             '<td>' + d[16] + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td class = "repopulate">Hae uudelleen</td>' +
             '</tr>' +
             '</table>' +
             '<table>' +
@@ -361,8 +352,7 @@
                 row.child(format(row.data())).show();
                 var query_id = row.data()[21];
                 tr.addClass('shown');
-                //var all_maps = document.querySelectorAll('[id^="map"]');
-                var map = 'map_' + query_id; //all_maps[0].id;
+                var map = 'map_' + query_id;
                 $.ajax({
                     url: "/map",
                     type: "GET",
@@ -370,32 +360,30 @@
                     data: {
                         'selected': map,
                         'query_id': query_id
-
                     },
                     dataType: "json",
                     success: function(data) {
                         Plotly.newPlot(map, data);
                     }
                 });
-
             }
+        });
 
-
-            // var rows = document.querySelectorAll('[id^=map]');
-            // var baseUrl = document.location.origin
-
-            // if (rows.length > 0) {
-            //    for (var i = 0; i < rows.length; i++) {
-            //        $.ajax('/map', {
-            //                method: 'POST',
-            //                dataType: 'json',
-            //                data: JSON.stringify(rows[i])
-
-
-            //            }),
-            //            $(rows[i]).load(baseUrl + "/map");
-            //    }
-            //}
+        $('#tables tbody').on('click', 'td.repopulate', function() {
+            var tr_child = $(this).parentsUntil('tr[role="row"]')[6];
+            var tr = tr_child.previousSibling;
+            var row = table.row(tr);
+            var data = row.data();
+            $.ajax({
+                url: "/valuation",
+                type: "POST",
+                contentType: 'application/json;charset=UTF-8',
+                data: {
+                    'action': 'repopulate',
+                    'query_id': data[21]
+                },
+                dataType: "json"
+            });
         });
     });
 </script>
