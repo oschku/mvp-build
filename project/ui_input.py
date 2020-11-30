@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import redirect, render_template, flash, Blueprint, request, url_for, session, jsonify
+from flask import redirect, render_template, flash, Blueprint, request, url_for, session, jsonify, make_response
 from flask_login import current_user, login_required, logout_user
 from flask_paginate import Pagination, get_page_parameter
 from .models import db, UserInput, User
@@ -51,104 +51,105 @@ def user_input():
 
     params = request.args.to_dict()
 
-    session.permanent = True
-    page = request.args.get('page', 1, type = int)
-      
-    queries = UserInput.query.order_by(UserInput.created_on.desc()).filter(text('user_input.user::integer = :id')).params(id = current_user.id)
-    queries = queries.paginate(page = page, per_page = 6)
-
-    form = UiForm(obj=UserInput)
-    print(session['last_login'])
-
-
-    # USER INPUT FORM AND VALUATION CALCULATION
-    if form.validate() and form.is_submitted():
-        query_id = randStr()
-
-        user_form_input = UserInput(
-            osoite = form.ui_osoite.data,
-            kunta = form.ui_kunta.data,
-            postinumero = form.ui_postinumero.data,
-            asuntotyyppi = form.ui_asuntotyyppi.data,
-            asuinala = form.ui_asuinala.data,
-            rakennusvuosi = form.ui_rakennusvuosi.data,
-            huone_lkm = form.ui_huone_lkm.data,
-            kerros = form.ui_kerros.data,
-            kerros_yht = form.ui_kerros_yht.data,
-            kunto = form.ui_kunto.data,
-            tontti = form.ui_tontti.data,
-            vastike = form.ui_vastike.data,
-            vuokrattu = form.ui_vuokrattu.data,
-            hissi = form.ui_hissi.data,
-            sauna = form.ui_sauna.data,
-            parveke = form.ui_parveke.data,
-            tonttiala = form.ui_tonttiala.data,
-            muu_kerrosala = form.ui_muu_kerrosala.data,
-            created_on=dt.now(),
-            user=int(current_user.id),
-            query_id = query_id,
-            hinta = None,
-            lat = None,
-            lng = None)
-
-        db.session.add(user_form_input)
-        db.session.commit()
-
-        try:
-            hinta = valuation.calculate(UserInput, query_id)[0]
-            hinta = float(hinta)
-            hinta = round(hinta, -3)
-            lat,lng = valuation.geodata.geocode(form.ui_osoite.data, form.ui_kunta.data)
-
+    if 'action' not in params:
+        session.permanent = True
+        page = request.args.get('page', 1, type = int)
         
-            
-            db.session.execute(
-                text("UPDATE user_input SET hinta=:param2 WHERE query_id=:param1"),
-                params = {"param2":hinta, "param1":query_id}
-            )
-            db.session.execute(
-                text("UPDATE user_input SET lng=:param2 WHERE query_id=:param1"),
-                params = {"param2":lng, "param1":query_id}
-            )
-            db.session.execute(
-                text("UPDATE user_input SET lat=:param2 WHERE query_id=:param1"),
-                params = {"param2":lat, "param1":query_id}
-            )
+        queries = UserInput.query.order_by(UserInput.created_on.desc()).filter(text('user_input.user::integer = :id')).params(id = current_user.id)
+        queries = queries.paginate(page = page, per_page = 6)
+
+        form = UiForm(obj=UserInput)
+        print(session['last_login'])
+
+
+        # USER INPUT FORM AND VALUATION CALCULATION
+        if form.validate() and form.is_submitted():
+            query_id = randStr()
+
+            user_form_input = UserInput(
+                osoite = form.ui_osoite.data,
+                kunta = form.ui_kunta.data,
+                postinumero = form.ui_postinumero.data,
+                asuntotyyppi = form.ui_asuntotyyppi.data,
+                asuinala = form.ui_asuinala.data,
+                rakennusvuosi = form.ui_rakennusvuosi.data,
+                huone_lkm = form.ui_huone_lkm.data,
+                kerros = form.ui_kerros.data,
+                kerros_yht = form.ui_kerros_yht.data,
+                kunto = form.ui_kunto.data,
+                tontti = form.ui_tontti.data,
+                vastike = form.ui_vastike.data,
+                vuokrattu = form.ui_vuokrattu.data,
+                hissi = form.ui_hissi.data,
+                sauna = form.ui_sauna.data,
+                parveke = form.ui_parveke.data,
+                tonttiala = form.ui_tonttiala.data,
+                muu_kerrosala = form.ui_muu_kerrosala.data,
+                created_on=dt.now(),
+                user=int(current_user.id),
+                query_id = query_id,
+                hinta = None,
+                lat = None,
+                lng = None)
+
+            db.session.add(user_form_input)
             db.session.commit()
-        
-        
-        except ValueError as V:
-            if V.args[1] == 'street':
-                form.populate_obj(UserInput)
-                flash('Osoite on virheellinen','street_err')
-                print(V.args[1])
-            elif V.args[1] == 'country':
-                form.populate_obj(UserInput)
-                flash('Osoite on virheellinen','input_err')
-                print(V.args[1])
-            elif V.args[1] == 'city':
-                form.populate_obj(UserInput)
-                flash( f'Kunnasta {form.ui_kunta.data} ei löytynyt osoitetta {form.ui_osoite.data}. Tarkista kunta','city_err')
-                print(V.args[1])
-                print(UserInput.osoite)
-            elif V.args[1] == 'bad_score':
-                form.populate_obj(UserInput)
-                flash( f'Osoitteella {form.ui_osoite.data} epäselvä osumatulos. Kokeile toista osoitetta','street_err')
-                print(V.args[1])
-                print(UserInput.osoite)
-            elif V.args[1] == 'multiple_streets':
-                form.populate_obj(UserInput)
-                flash( f'Osoitteella {form.ui_osoite.data} löytyi useita hakutuloksia. Tarkenna hakua','street_err')
-                print(V.args[1])
-                print(UserInput.osoite)
-            elif V.args[1] == 'no_streets':
-                form.populate_obj(UserInput)
-                flash( f'Osoite on virheellinen','street_err')
-                print(V.args[1])
-                print(UserInput.osoite)
-                  
 
-        return redirect('/valuation')
+            try:
+                hinta = valuation.calculate(UserInput, query_id)[0]
+                hinta = float(hinta)
+                hinta = round(hinta, -3)
+                lat,lng = valuation.geodata.geocode(form.ui_osoite.data, form.ui_kunta.data)
+
+            
+                
+                db.session.execute(
+                    text("UPDATE user_input SET hinta=:param2 WHERE query_id=:param1"),
+                    params = {"param2":hinta, "param1":query_id}
+                )
+                db.session.execute(
+                    text("UPDATE user_input SET lng=:param2 WHERE query_id=:param1"),
+                    params = {"param2":lng, "param1":query_id}
+                )
+                db.session.execute(
+                    text("UPDATE user_input SET lat=:param2 WHERE query_id=:param1"),
+                    params = {"param2":lat, "param1":query_id}
+                )
+                db.session.commit()
+            
+            
+            except ValueError as V:
+                if V.args[1] == 'street':
+                    form.populate_obj(UserInput)
+                    flash('Osoite on virheellinen','street_err')
+                    print(V.args[1])
+                elif V.args[1] == 'country':
+                    form.populate_obj(UserInput)
+                    flash('Osoite on virheellinen','input_err')
+                    print(V.args[1])
+                elif V.args[1] == 'city':
+                    form.populate_obj(UserInput)
+                    flash( f'Kunnasta {form.ui_kunta.data} ei löytynyt osoitetta {form.ui_osoite.data}. Tarkista kunta','city_err')
+                    print(V.args[1])
+                    print(UserInput.osoite)
+                elif V.args[1] == 'bad_score':
+                    form.populate_obj(UserInput)
+                    flash( f'Osoitteella {form.ui_osoite.data} epäselvä osumatulos. Kokeile toista osoitetta','street_err')
+                    print(V.args[1])
+                    print(UserInput.osoite)
+                elif V.args[1] == 'multiple_streets':
+                    form.populate_obj(UserInput)
+                    flash( f'Osoitteella {form.ui_osoite.data} löytyi useita hakutuloksia. Tarkenna hakua','street_err')
+                    print(V.args[1])
+                    print(UserInput.osoite)
+                elif V.args[1] == 'no_streets':
+                    form.populate_obj(UserInput)
+                    flash( f'Osoite on virheellinen','street_err')
+                    print(V.args[1])
+                    print(UserInput.osoite)
+                    
+
+            return redirect('/valuation')
     
 
   
@@ -160,60 +161,20 @@ def user_input():
         data_dict = query_pop.__dict__
         data_dict.pop('_sa_instance_state')
 
+        # Lambda to take care of missing data in price column:
+        null_check = lambda x : int(Decimal(x)) if x else 'Hakuvirhe'
+        null_check_coord = lambda x : float(Decimal(x)) if x else None
+
+        data_dict['created_on'] = str(data_dict['created_on'].strftime("%d.%m.%Y %H:%M"))
+        data_dict['hinta'] = null_check(data_dict['hinta'])
+        data_dict['lat'] = null_check_coord(data_dict['lat'])
+        data_dict['lng'] = null_check_coord(data_dict['lng']) 
         
 
-        form = UiForm(obj=UserInput)
-        user_form_prepop = UserInput(
-            osoite = query_pop.osoite,
-            kunta = query_pop.kunta,
-            postinumero = query_pop.postinumero,
-            asuntotyyppi = query_pop.asuntotyyppi,
-            asuinala = query_pop.asuinala,
-            rakennusvuosi = query_pop.rakennusvuosi,
-            huone_lkm = query_pop.huone_lkm,
-            kerros = query_pop.kerros,
-            kerros_yht = query_pop.kerros_yht,
-            kunto = query_pop.kunto,
-            tontti = query_pop.tontti,
-            vastike = query_pop.vastike,
-            vuokrattu = query_pop.vuokrattu,
-            hissi = query_pop.hissi,
-            sauna = query_pop.sauna,
-            parveke = query_pop.parveke,
-            tonttiala = query_pop.tonttiala,
-            muu_kerrosala = query_pop.muu_kerrosala,
-            created_on=query_pop.created_on,
-            user=query_pop.user,
-            query_id = query_pop.query_id,
-            hinta = query_pop.hinta,
-            lat = query_pop.lat,
-            lng = query_pop.lng)
+        response = make_response(json.dumps(data_dict))
+        response.content_type = 'application/json'
 
-        db.session.add(user_form_prepop)
-        form.populate_obj(UserInput)
-        form.ui_osoite.data = 'TEST'
-        # form.ui_osoite.data = query_pop.osoite
-        # form.ui_kunta.data,
-        # form.ui_postinumero.data,
-        # form.ui_asuntotyyppi.data,
-        # form.ui_asuinala.data,
-        # form.ui_rakennusvuosi.data,
-        # form.ui_huone_lkm.data,
-        # form.ui_kerros.data,
-        # form.ui_kerros_yht.data,
-        # form.ui_kunto.data,
-        # form.ui_tontti.data,
-        # form.ui_vastike.data,
-        # form.ui_vuokrattu.data,
-        # form.ui_hissi.data,
-        # form.ui_sauna.data,
-        # form.ui_parveke.data,
-        # form.ui_tonttiala.data,
-        # form.ui_muu_kerrosala.data)
-        # for field, q in zip(form, data_dict):
-        #     field.data = q
-
-        
+        return response
    
 
     return render_template('inputs.html', form = form, content_title = "Valuation Engine")

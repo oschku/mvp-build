@@ -6,3 +6,8 @@ td.details-control {
 tr.shown td.details-control {
     background: url('/static/dist/img/details_close.png') no-repeat center center;
 }
+
+td.repopulate {
+    background: url('/static/dist/img/reload_icon.png') no-repeat center center;
+    cursor: pointer;
+}
