@@ -71,7 +71,7 @@ form {
 
 .formwrapper {
     background: white;
-    min-width: 450px;
+    min-width: 300px;
     display: flex;
     flex-wrap: wrap;
     border-radius: 10px;
@@ -120,13 +120,13 @@ textarea,
 select {
     padding: 8px;
     margin-bottom: 15px;
-    width: -webkit-fill-available;
+    width: 100%;
     border: 1px solid #d4d9e3;
     font-weight: 200;
     color: #4d5060;
     font-family: inherit;
     transition: all .3s ease-out;
-    font-size: .9em;
+    font-size: .8em;
     outline-color: transparent;
     outline-style: none;
 }
@@ -213,6 +213,11 @@ i {
 
 .bolded {
     font-weight: bold;
+}
+
+.maps {
+    width: fit-content;
+    height: fit-content;
 }
 
 .cssload-dots {

@@ -152,11 +152,10 @@ def user_input():
             return redirect('/valuation')
     
 
-  
+    # GET request to repopulate form data
     if 'action' in params:
         query_id = params['query_id']
-        query_pop = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()
-        
+        query_pop = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()        
         
         data_dict = query_pop.__dict__
         data_dict.pop('_sa_instance_state')
@@ -168,8 +167,7 @@ def user_input():
         data_dict['created_on'] = str(data_dict['created_on'].strftime("%d.%m.%Y %H:%M"))
         data_dict['hinta'] = null_check(data_dict['hinta'])
         data_dict['lat'] = null_check_coord(data_dict['lat'])
-        data_dict['lng'] = null_check_coord(data_dict['lng']) 
-        
+        data_dict['lng'] = null_check_coord(data_dict['lng'])        
 
         response = make_response(json.dumps(data_dict))
         response.content_type = 'application/json'
