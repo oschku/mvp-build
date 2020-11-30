@@ -33,6 +33,14 @@
                 <div class="sidebar-brand-text mx-5">VALU/AI<sup>2</sup></div>
             </a>
 
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('main_bp.dashboard') }}">
+                    <i class="fas fa-fw fa-chart-line"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -41,10 +49,10 @@
                 Valuation tools
             </div>
 
-            <!-- Nav Item - Tables -->
+            <!-- Nav Item - Valuation -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('valuation_bp.user_input') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fas fa-fw fa-sign"></i>
                     <span>Valuation</span></a>
             </li>
 
@@ -73,8 +81,13 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
+                    <!-- Navbar - Page Heading -->
+                    <ul class="navbar-nav mr-auto">
+                        <h4 class="navbar brand">{{content_title}}</h4>
+                    </ul>
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
+
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -111,8 +124,7 @@
 
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">{{content_title}}</h1>
+
                     {% block content %}{% endblock %}
                 </div>
                 <!-- /.container-fluid -->
@@ -122,7 +134,7 @@
 
 
             <!-- Footer -->
-            <footer class="page-footer bg-white" style=" bottom:0;">
+            <footer class="footer bg-white" style=" bottom:0;">
                 <div class="container my-auto" style="padding: 10px">
                     <div class="copyright text-center my-auto">
                         <span>Copyright &copy; 2020, AXW Digital</span>
@@ -177,17 +189,6 @@
 </body>
 
 
-
-
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="12" >
-            </feGaussianBlur><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0	0 1 0 0 0	0 0 1 0 0	0 0 0 18 -7" result="goo" >
-            </feColorMatrix>
-        </filter>
-</defs>
-</svg>
 
 
 

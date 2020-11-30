@@ -21,6 +21,8 @@ import os
 import pandas as pd
 import json
 from statistics import mean
+from babel.numbers import format_currency
+import numpy as np
 
 
 
@@ -251,10 +253,16 @@ def data():
 
 
 
-def create_map(lat, lng):
+def create_map(lat, lng, addr, price, level):
 
+    customdata=np.stack(([addr, price]), axis=-1)
     
-    
+    if level == 'local':
+        zoom = 11
+        height = 450
+    else:
+        zoom = 10
+        height = 600
 
     fig = go.Figure()
 
@@ -266,26 +274,31 @@ def create_map(lat, lng):
                 size=17,
                 color='rgb(255, 0, 0)',
                 opacity=0.7
-            ),
-            text = 'kohde',
-            hoverinfo='text'
+            )
+            
         ))
 
     fig.add_trace(go.Scattermapbox(
             lat=lat,
             lon=lng,
+            customdata=customdata,
             mode='markers',
             marker=go.scattermapbox.Marker(
                 size=8,
                 color='rgb(242, 177, 172)',
                 opacity=0.7
             ),
-            hoverinfo='none'
+            hovertemplate =
+            "<b> %{customdata[0]} </b><br><br>" +
+            "Hinta: %{customdata[1]}"+
+            '<extra></extra>',
         ))
 
     fig.update_layout(
         autosize=True,
+        height=height,
         hovermode='closest',
+        hoverlabel_align = 'left',
         showlegend=False,
         mapbox=dict(
             accesstoken=mapbox_access_token,
@@ -295,7 +308,7 @@ def create_map(lat, lng):
             lat=mean(lat),
             lon=mean(lng)
         ),
-            zoom=11,
+            zoom=zoom,
             style='mapbox://styles/axwdigital/ckhx9p6b002ra19nsd4ry1cz9'
         ),
         margin = dict(l=20, r=20, t=20, b=20)
@@ -336,6 +349,8 @@ def map():
     query_id = params['query_id']
     lat_ = []
     lng_ = []
+    addr_ = []
+    price_ = []
 
     if query_id != 'all':
         query = db.session.query(UserInput).filter(text('user_input.query_id = :query_id')).params(query_id = query_id).first()
@@ -343,15 +358,24 @@ def map():
         lng = float(query.lng)
         lat_.append(lat)
         lng_.append(lng)
+        level = 'local'
     else:
-        query = db.session.query(UserInput).all()
+        query = db.session.query(UserInput).filter(text('user_input.user::integer = :user_id')).params(user_id = current_user.id).all()
         for row in query:
-            lat = float(row.lat)
-            lng = float(row.lng)
-            lat_.append(lat)
-            lng_.append(lng)
+            if row.lat and row.lng:
+                lat = float(row.lat)
+                lng = float(row.lng)
+                addr = row.osoite + ', ' + row.kunta
+                price = format_currency(row.hinta, 'EUR', format=u'#,##0\xa0¤', locale='fi_FI', currency_digits=False)
+                lat_.append(lat)
+                lng_.append(lng)
+                addr_.append(addr)
+                price_.append(price)
+                level = 'global'
 
-    graphJSON= create_map(lat_, lng_)
+
+
+    graphJSON= create_map(lat_, lng_, addr_, price_, level)
 
 
 
