@@ -376,9 +376,9 @@
             var data = row.data();
             $.ajax({
                 url: "/valuation",
-                type: "POST",
+                type: "GET",
                 contentType: 'application/json;charset=UTF-8',
-                data: {
+                data: {§
                     'action': 'repopulate',
                     'query_id': data[21]
                 },
