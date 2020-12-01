@@ -260,9 +260,15 @@ def create_map(lat, lng, addr, price, level):
     if level == 'local':
         zoom = 11
         height = 450
+        hovertemplate = False
+        hovermode = False
     else:
         zoom = 10
         height = 600
+        hovertemplate = "<b> %{customdata[0]} </b><br><br>" + \
+                        "Hinta: %{customdata[1]}" + \
+                        '<extra></extra>'
+        hovermode = 'closest'
 
     fig = go.Figure()
 
@@ -288,16 +294,13 @@ def create_map(lat, lng, addr, price, level):
                 color='rgb(242, 177, 172)',
                 opacity=0.7
             ),
-            hovertemplate =
-            "<b> %{customdata[0]} </b><br><br>" +
-            "Hinta: %{customdata[1]}"+
-            '<extra></extra>',
+            hovertemplate = hovertemplate            
         ))
 
     fig.update_layout(
         autosize=True,
         height=height,
-        hovermode='closest',
+        hovermode=hovermode,
         hoverlabel_align = 'left',
         showlegend=False,
         mapbox=dict(

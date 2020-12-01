@@ -29,7 +29,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('valuation_bp.user_input') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('main_bp.dashboard') }}">
                 <div class="sidebar-brand-text mx-5">VALU/AI<sup>2</sup></div>
             </a>
 
@@ -78,7 +78,7 @@
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
+                        <i class="fa fa-bars" style="position:sticky;"></i>
                     </button>
 
                     <!-- Navbar - Page Heading -->
@@ -185,6 +185,21 @@
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
 
     {% block additionalscripts %}{% endblock %}
+
+    <script>
+        // jQuery script for collabsable sidebar when in mobile
+
+        if ($(window).width() < 800) {
+            $('#page-top').removeClass('sidebar-toggled');
+            $('#accordionSidebar').addClass('toggled');
+        } else {
+            $('#page-top').addClass('sidebar-toggled');
+            $('#accordionSidebar').removeClass('sidebar-toggled');
+        }
+    </script>
+
+
+
 
 </body>
 
