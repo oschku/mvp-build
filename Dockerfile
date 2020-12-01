@@ -19,6 +19,9 @@ RUN curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py --force-reinstall && \
     rm get-pip.py
 
+# Get pip3
+RUN apt-get -y install python3-pip
+
 
 # XGBoost dependency
 RUN apt-get update && \
@@ -46,6 +49,7 @@ WORKDIR /app
 
 
 RUN pip install -r requirements.txt
+RUN pip3 install sqlalchemy-datatables==2.0.1
 
 COPY . /app
 
