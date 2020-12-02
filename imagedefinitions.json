@@ -1,6 +1,4 @@
-[
-    {
-        "name": "mvp-build",
-        "imageUri": "oschku/mvp-build"
-    }
-]
+[{
+    "name": "mvp-build-project",
+    "imageUri": "oschku/mvp-build"
+}]
