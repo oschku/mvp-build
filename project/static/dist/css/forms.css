@@ -1,0 +1,684 @@
+form {
+    column-count: 2;
+    background: white;
+    width: 100%;
+    padding: 15px 15px 10px 15px;
+    column-fill: balance;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.form-field_1 {
+    display: inline-table;
+    position: relative;
+    padding: 2px;
+    min-width: 100%;
+    height: 70px;
+    padding: 0 15px 0 15px;
+}
+
+.form-field_2 {
+    display: inline-table;
+    position: relative;
+    padding: 2px;
+    min-width: 40%;
+    max-width: 45%;
+    height: 70px;
+    padding: 0 15px 0 0
+}
+
+.form-field_4_1 {
+    display: inline-table;
+    position: relative;
+    padding: 2px;
+    max-width: 15%;
+    height: 70px;
+    margin-left: 15px;
+}
+
+.form-field_4 {
+    display: inline-table;
+    position: relative;
+    padding: 2px;
+    max-width: 15%;
+    height: 70px;
+}
+
+.submit-field {
+    display: inline-table;
+    position: relative;
+    padding: 2px;
+    min-width: 100%;
+    height: 70px;
+    padding: 0 15px 0 15px;
+}
+
+.container {
+    padding: 80px;
+    display: flex;
+    justify-content: center;
+    max-height: 400px;
+}
+
+.title {
+    font-size: 1.7rem;
+    color: #5f6988;
+    font-weight: 300;
+    border-bottom: 1px solid #dbe3ec;
+    padding-bottom: 5px;
+    margin: 0 0 40px 0;
+}
+
+.formwrapper {
+    background: white;
+    min-width: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 10px;
+}
+
+.results {
+    background: white;
+    width: 1000px;
+    box-shadow: 0 0 5px rgba(65, 67, 144, 0.1);
+    padding: 50px;
+    margin-left: 20px;
+    overflow: auto;
+}
+
+table:nth-child(even) {
+    background: whitesmoke;
+    border-width: 5px;
+    border: 5px black;
+    border-radius: 3px;
+}
+
+table:nth-child(odd) {
+    background: lightblue;
+    border-width: 5px;
+    border: 5px black;
+    border-radius: 3px;
+}
+
+.radio {
+    justify-content: left !important;
+    width: 100px !important;
+    display: flex !important;
+    float: left !important;
+}
+
+label {
+    font-size: .9em;
+    color: #5f6988;
+    margin-bottom: 3px;
+    display: block;
+    font-weight: 300;
+}
+
+input,
+textarea,
+select {
+    padding: 8px;
+    margin-bottom: 15px;
+    width: 100%;
+    border: 1px solid #d4d9e3;
+    font-weight: 200;
+    color: #4d5060;
+    font-family: inherit;
+    transition: all .3s ease-out;
+    font-size: .8em;
+    outline-color: transparent;
+    outline-style: none;
+}
+
+select {
+    -webkit-appearance: none;
+}
+
+input[type="text"]::placeholder {
+    color: #d4d9e3;
+}
+
+input[type="text"]:hover,
+input[type="password"]:hover,
+textarea:hover,
+select:hover {
+    border-color: #5eb9d7;
+    background: #d9f6ff;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    background: white;
+    border-color: #5eb9d7;
+    box-shadow: unset;
+}
+
+input[type="submit"] {
+    height: 120px !important;
+    background: #5eb9d7;
+    border: 120px !important;
+    color: white;
+    border-radius: 2px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-weight: 400;
+    border: 1px solid #5eb9d7;
+    transition: all .3s ease-out;
+    padding: 0 15px 0 15px;
+}
+
+input[type="submit"]:hover {
+    cursor: pointer;
+    background: white;
+    color: #5eb9d7;
+}
+
+.success-wrapper {
+    background: white;
+    width: 350px;
+    box-shadow: 0 0 5px rgba(65, 67, 144, 0.1);
+    padding: 50px;
+}
+
+.errors {
+    list-style: none;
+    margin: 10px 0;
+    position: absolute;
+    z-index: 10;
+    right: -222px;
+    top: 0;
+    bottom: 0;
+    background: #fae7ea;
+    padding: 9px 15px;
+    border-radius: 3px;
+    border: 1px solid #e1c5c5;
+    color: #8d7575;
+    width: 182px;
+    text-align: center;
+    height: fit-content;
+    margin: auto;
+}
+
+i {
+    position: absolute;
+    margin: auto;
+    top: 4px;
+    bottom: 0;
+    right: 16px;
+    height: fit-content;
+    color: grey;
+}
+
+.bolded {
+    font-weight: bold;
+}
+
+.maps {
+    width: fit-content;
+    height: fit-content;
+}
+
+.cssload-dots {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: 200px auto auto auto;
+    outline: 1px solid red;
+    filter: url(#goo);
+    -o-filter: url(#goo);
+    -ms-filter: url(#goo);
+    -webkit-filter: url(#goo);
+    -moz-filter: url(#goo);
+}
+
+.cssload-dot {
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.cssload-dot:before {
+    content: "";
+    width: 34px;
+    height: 34px;
+    border-radius: 49px;
+    background: rgb(251, 211, 1);
+    position: absolute;
+    left: 50%;
+    transform: translateY(0);
+    -o-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    margin-left: -17.5px;
+    margin-top: -17.5px;
+}
+
+.cssload-dot:nth-child(5):before {
+    z-index: 100;
+    width: 44.5px;
+    height: 44.5px;
+    margin-left: -21.75px;
+    margin-top: -21.75px;
+    animation: cssload-dot-colors 4.6s ease infinite;
+    -o-animation: cssload-dot-colors 4.6s ease infinite;
+    -ms-animation: cssload-dot-colors 4.6s ease infinite;
+    -webkit-animation: cssload-dot-colors 4.6s ease infinite;
+    -moz-animation: cssload-dot-colors 4.6s ease infinite;
+}
+
+.cssload-dot:nth-child(1) {
+    animation: cssload-dot-rotate-1 4.6s 0s linear infinite;
+    -o-animation: cssload-dot-rotate-1 4.6s 0s linear infinite;
+    -ms-animation: cssload-dot-rotate-1 4.6s 0s linear infinite;
+    -webkit-animation: cssload-dot-rotate-1 4.6s 0s linear infinite;
+    -moz-animation: cssload-dot-rotate-1 4.6s 0s linear infinite;
+}
+
+.cssload-dot:nth-child(1):before {
+    background-color: rgb(255, 50, 112);
+    animation: cssload-dot-move 4.6s 0s ease infinite;
+    -o-animation: cssload-dot-move 4.6s 0s ease infinite;
+    -ms-animation: cssload-dot-move 4.6s 0s ease infinite;
+    -webkit-animation: cssload-dot-move 4.6s 0s ease infinite;
+    -moz-animation: cssload-dot-move 4.6s 0s ease infinite;
+}
+
+.cssload-dot:nth-child(2) {
+    animation: cssload-dot-rotate-2 4.6s 1.15s linear infinite;
+    -o-animation: cssload-dot-rotate-2 4.6s 1.15s linear infinite;
+    -ms-animation: cssload-dot-rotate-2 4.6s 1.15s linear infinite;
+    -webkit-animation: cssload-dot-rotate-2 4.6s 1.15s linear infinite;
+    -moz-animation: cssload-dot-rotate-2 4.6s 1.15s linear infinite;
+}
+
+.cssload-dot:nth-child(2):before {
+    background-color: rgb(32, 139, 241);
+    animation: cssload-dot-move 4.6s 1.15s ease infinite;
+    -o-animation: cssload-dot-move 4.6s 1.15s ease infinite;
+    -ms-animation: cssload-dot-move 4.6s 1.15s ease infinite;
+    -webkit-animation: cssload-dot-move 4.6s 1.15s ease infinite;
+    -moz-animation: cssload-dot-move 4.6s 1.15s ease infinite;
+}
+
+.cssload-dot:nth-child(3) {
+    animation: cssload-dot-rotate-3 4.6s 2.3s linear infinite;
+    -o-animation: cssload-dot-rotate-3 4.6s 2.3s linear infinite;
+    -ms-animation: cssload-dot-rotate-3 4.6s 2.3s linear infinite;
+    -webkit-animation: cssload-dot-rotate-3 4.6s 2.3s linear infinite;
+    -moz-animation: cssload-dot-rotate-3 4.6s 2.3s linear infinite;
+}
+
+.cssload-dot:nth-child(3):before {
+    background-color: rgb(175, 225, 2);
+    animation: cssload-dot-move 4.6s 2.3s ease infinite;
+    -o-animation: cssload-dot-move 4.6s 2.3s ease infinite;
+    -ms-animation: cssload-dot-move 4.6s 2.3s ease infinite;
+    -webkit-animation: cssload-dot-move 4.6s 2.3s ease infinite;
+    -moz-animation: cssload-dot-move 4.6s 2.3s ease infinite;
+}
+
+.cssload-dot:nth-child(4) {
+    animation: cssload-dot-rotate-4 4.6s 3.45s linear infinite;
+    -o-animation: cssload-dot-rotate-4 4.6s 3.45s linear infinite;
+    -ms-animation: cssload-dot-rotate-4 4.6s 3.45s linear infinite;
+    -webkit-animation: cssload-dot-rotate-4 4.6s 3.45s linear infinite;
+    -moz-animation: cssload-dot-rotate-4 4.6s 3.45s linear infinite;
+}
+
+.cssload-dot:nth-child(4):before {
+    background-color: rgb(251, 211, 1);
+    animation: cssload-dot-move 4.6s 3.45s ease infinite;
+    -o-animation: cssload-dot-move 4.6s 3.45s ease infinite;
+    -ms-animation: cssload-dot-move 4.6s 3.45s ease infinite;
+    -webkit-animation: cssload-dot-move 4.6s 3.45s ease infinite;
+    -moz-animation: cssload-dot-move 4.6s 3.45s ease infinite;
+}
+
+@keyframes cssload-dot-move {
+    0% {
+        transform: translateY(0);
+    }
+    18%,
+    22% {
+        transform: translateY(-68px);
+    }
+    40%,
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@-o-keyframes cssload-dot-move {
+    0% {
+        -o-transform: translateY(0);
+    }
+    18%,
+    22% {
+        -o-transform: translateY(-68px);
+    }
+    40%,
+    100% {
+        -o-transform: translateY(0);
+    }
+}
+
+@-ms-keyframes cssload-dot-move {
+    0% {
+        -ms-transform: translateY(0);
+    }
+    18%,
+    22% {
+        -ms-transform: translateY(-68px);
+    }
+    40%,
+    100% {
+        -ms-transform: translateY(0);
+    }
+}
+
+@-webkit-keyframes cssload-dot-move {
+    0% {
+        -webkit-transform: translateY(0);
+    }
+    18%,
+    22% {
+        -webkit-transform: translateY(-68px);
+    }
+    40%,
+    100% {
+        -webkit-transform: translateY(0);
+    }
+}
+
+@-moz-keyframes cssload-dot-move {
+    0% {
+        -moz-transform: translateY(0);
+    }
+    18%,
+    22% {
+        -moz-transform: translateY(-68px);
+    }
+    40%,
+    100% {
+        -moz-transform: translateY(0);
+    }
+}
+
+@keyframes cssload-dot-colors {
+    0% {
+        background-color: rgb(251, 211, 1);
+    }
+    25% {
+        background-color: rgb(0, 0, 0);
+    }
+    50% {
+        background-color: rgb(32, 139, 241);
+    }
+    75% {
+        background-color: rgb(175, 225, 2);
+    }
+    100% {
+        background-color: rgb(251, 211, 1);
+    }
+}
+
+@-o-keyframes cssload-dot-colors {
+    0% {
+        background-color: rgb(251, 211, 1);
+    }
+    25% {
+        background-color: rgb(0, 0, 0);
+    }
+    50% {
+        background-color: rgb(32, 139, 241);
+    }
+    75% {
+        background-color: rgb(175, 225, 2);
+    }
+    100% {
+        background-color: rgb(251, 211, 1);
+    }
+}
+
+@-ms-keyframes cssload-dot-colors {
+    0% {
+        background-color: rgb(251, 211, 1);
+    }
+    25% {
+        background-color: rgb(0, 0, 0);
+    }
+    50% {
+        background-color: rgb(32, 139, 241);
+    }
+    75% {
+        background-color: rgb(175, 225, 2);
+    }
+    100% {
+        background-color: rgb(251, 211, 1);
+    }
+}
+
+@-webkit-keyframes cssload-dot-colors {
+    0% {
+        background-color: rgb(251, 211, 1);
+    }
+    25% {
+        background-color: rgb(0, 0, 0);
+    }
+    50% {
+        background-color: rgb(32, 139, 241);
+    }
+    75% {
+        background-color: rgb(175, 225, 2);
+    }
+    100% {
+        background-color: rgb(251, 211, 1);
+    }
+}
+
+@-moz-keyframes cssload-dot-colors {
+    0% {
+        background-color: rgb(251, 211, 1);
+    }
+    25% {
+        background-color: rgb(0, 0, 0);
+    }
+    50% {
+        background-color: rgb(32, 139, 241);
+    }
+    75% {
+        background-color: rgb(175, 225, 2);
+    }
+    100% {
+        background-color: rgb(251, 211, 1);
+    }
+}
+
+@keyframes cssload-dot-rotate-1 {
+    0% {
+        transform: rotate(-105deg);
+    }
+    100% {
+        transform: rotate(270deg);
+    }
+}
+
+@-o-keyframes cssload-dot-rotate-1 {
+    0% {
+        -o-transform: rotate(-105deg);
+    }
+    100% {
+        -o-transform: rotate(270deg);
+    }
+}
+
+@-ms-keyframes cssload-dot-rotate-1 {
+    0% {
+        -ms-transform: rotate(-105deg);
+    }
+    100% {
+        -ms-transform: rotate(270deg);
+    }
+}
+
+@-webkit-keyframes cssload-dot-rotate-1 {
+    0% {
+        -webkit-transform: rotate(-105deg);
+    }
+    100% {
+        -webkit-transform: rotate(270deg);
+    }
+}
+
+@-moz-keyframes cssload-dot-rotate-1 {
+    0% {
+        -moz-transform: rotate(-105deg);
+    }
+    100% {
+        -moz-transform: rotate(270deg);
+    }
+}
+
+@keyframes cssload-dot-rotate-2 {
+    0% {
+        transform: rotate(165deg);
+    }
+    100% {
+        transform: rotate(540deg);
+    }
+}
+
+@-o-keyframes cssload-dot-rotate-2 {
+    0% {
+        -o-transform: rotate(165deg);
+    }
+    100% {
+        -o-transform: rotate(540deg);
+    }
+}
+
+@-ms-keyframes cssload-dot-rotate-2 {
+    0% {
+        -ms-transform: rotate(165deg);
+    }
+    100% {
+        -ms-transform: rotate(540deg);
+    }
+}
+
+@-webkit-keyframes cssload-dot-rotate-2 {
+    0% {
+        -webkit-transform: rotate(165deg);
+    }
+    100% {
+        -webkit-transform: rotate(540deg);
+    }
+}
+
+@-moz-keyframes cssload-dot-rotate-2 {
+    0% {
+        -moz-transform: rotate(165deg);
+    }
+    100% {
+        -moz-transform: rotate(540deg);
+    }
+}
+
+@keyframes cssload-dot-rotate-3 {
+    0% {
+        transform: rotate(435deg);
+    }
+    100% {
+        transform: rotate(810deg);
+    }
+}
+
+@-o-keyframes cssload-dot-rotate-3 {
+    0% {
+        -o-transform: rotate(435deg);
+    }
+    100% {
+        -o-transform: rotate(810deg);
+    }
+}
+
+@-ms-keyframes cssload-dot-rotate-3 {
+    0% {
+        -ms-transform: rotate(435deg);
+    }
+    100% {
+        -ms-transform: rotate(810deg);
+    }
+}
+
+@-webkit-keyframes cssload-dot-rotate-3 {
+    0% {
+        -webkit-transform: rotate(435deg);
+    }
+    100% {
+        -webkit-transform: rotate(810deg);
+    }
+}
+
+@-moz-keyframes cssload-dot-rotate-3 {
+    0% {
+        -moz-transform: rotate(435deg);
+    }
+    100% {
+        -moz-transform: rotate(810deg);
+    }
+}
+
+@keyframes cssload-dot-rotate-4 {
+    0% {
+        transform: rotate(705deg);
+    }
+    100% {
+        transform: rotate(1080deg);
+    }
+}
+
+@-o-keyframes cssload-dot-rotate-4 {
+    0% {
+        -o-transform: rotate(705deg);
+    }
+    100% {
+        -o-transform: rotate(1080deg);
+    }
+}
+
+@-ms-keyframes cssload-dot-rotate-4 {
+    0% {
+        -ms-transform: rotate(705deg);
+    }
+    100% {
+        -ms-transform: rotate(1080deg);
+    }
+}
+
+@-webkit-keyframes cssload-dot-rotate-4 {
+    0% {
+        -webkit-transform: rotate(705deg);
+    }
+    100% {
+        -webkit-transform: rotate(1080deg);
+    }
+}
+
+@-moz-keyframes cssload-dot-rotate-4 {
+    0% {
+        -moz-transform: rotate(705deg);
+    }
+    100% {
+        -moz-transform: rotate(1080deg);
+    }
+}

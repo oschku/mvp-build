@@ -1,0 +1,88 @@
+html,
+body {
+    font-family: 'Poppins', sans-serif;
+    background-image: url('/static/dist/img/dashboard_img.jpg');
+    height: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.dashboard-template {
+    color: white;
+    background: #5eb9d7;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+
+.dashboard-template .container {
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: fit-content;
+    width: fit-content;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-bottom: 2%;
+    padding-top: 2%;
+    background: #5eb9d7;
+}
+
+.dashboard-template .container h1 {
+    font-family: 'Goldman';
+    font-weight: 600;
+    line-height: 1
+}
+
+.dashboard-template .container p {
+    font-size: 1.5em;
+    font-weight: 300;
+    text-shadow: 0 0 3px #507b89
+}
+
+.dashboard-template .container a {
+    box-shadow: 0px 1px 0px 0px #f0f7fa;
+    background: linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
+    background-color: #33bdef;
+    border-radius: 7px;
+    border: 2px solid #057fd0;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 32px;
+    text-decoration: none;
+    text-shadow: 0px -1px 0px #5b6178;
+}
+
+.container a:hover {
+    background: linear-gradient(to bottom, #019ad2 5%, #33bdef 100%);
+    background-color: #019ad2;
+}
+
+.container a:active {
+    position: relative;
+    top: 1px;
+}
+
+.dashboard-template .container a .log_out {
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: underline;
+    margin-top: 50px;
+    display: block;
+    color: white;
+    opacity: .7;
+    transition: all .3s ease-out
+}
+
+.dashboard-template .container a:hover {
+    cursor: pointer;
+    opacity: 1
+}

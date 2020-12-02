@@ -6,7 +6,10 @@ from flask_login import current_user, login_required, logout_user
 from flask import request, render_template, make_response, session
 from datetime import datetime as dt
 from flask import current_app as app
-from .models import db, User
+from .models import db, User, UserInput
+from babel.numbers import format_currency
+from sqlalchemy import text
+from sqlalchemy.sql import func
 from babel.numbers import format_currency
 
 # Blueprint Configuration
@@ -24,13 +27,20 @@ main_bp = Blueprint(
 def dashboard():
     """Logged-in User Dashboard."""
     session.permanent = True
+    data = db.session.query(UserInput).filter(text('user_input.user::integer = :user_id')).params(user_id = current_user.id)
+    price_data = db.session.query(UserInput).with_entities(func.avg(UserInput.hinta)).filter(text('user_input.user::integer = :user_id')).params(user_id = current_user.id).first()[0]
+    if price_data:
+        price_data = format_currency(price_data, 'EUR', format=u'#,##0\xa0¤', locale='fi_FI', currency_digits=False)
+    else:
+        price_data = "Ei hakuja"
     return render_template(
-        'test.html',
-        title='Valuation engine',
-        content_title='Valuation engine',
+        'dashboard.html',
+        content_title='Dashboard',
         template='dashboard-template',
         current_user=current_user,
-        body="VALU/AI"
+        body="VALU/AI",
+        data=data,
+        price_data=price_data
     )
 
 
@@ -52,3 +62,7 @@ def eur(value):
     return format_currency(value, 'EUR', locale='fi_FI')
 
 app.jinja_env.filters['eur'] = eur
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html")

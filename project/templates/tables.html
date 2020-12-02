@@ -1,154 +1,127 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block pagestyles %}
+<link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.css" rel="stylesheet"> {% endblock %} {% block content %}
 
+<!-- Begin Page Content -->
+<div class="container-fluid">
 
-{% block pagestyles %}  
-<link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.css" rel="stylesheet">
-{% endblock %}
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
+    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
 
+    <!-- DataTales Example -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>DataTables 1.10.x example: Users and their address.</h2>
+            <table id="tables" class="display" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>test</th>
+                        <th>Osssoite</th>
+                        <th>Kunta</th>
+                        <th>Asuntotyyppi</th>
+                        <th>Asuinala</th>
+                        <th>Rakennusvuosi</th>
+                        <th>Kunto</th>
+                        <th>Unixtime</th>
+                        <th>Haettu</th>
+                        <th>Dummy</th>
+                        <th>Hinta</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 
-
-{% block content %}
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-                    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                        For more information about DataTables, please visit the <a target="_blank"
-                            href="https://datatables.net">official DataTables documentation</a>.</p>
-
-                    <!-- DataTales Example -->
-                    <div class="row">
-                        <div class="col-lg-12">
-                          <h2>DataTables 1.10.x example: Users and their address.</h2>
-                          <table id="tables" class="display" cellspacing="0" width="100%">
-                            <thead>
-                              <tr>
-                                <th>Osoite</th>
-                                <th>Kunta</th>
-                                <th>Asuntotyyppi</th>
-                                <th>Asuinala</th>
-                                <th>Rakennusvuosi</th>
-                                <th>Kunto</th>
-                                <th>Unixtime</th>
-                                <th>Haettu</th>
-                                <th>Dummy</th>
-                                <th>Hinta</th>
-                              </tr>
-                            </thead>
-                          <tbody></tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
+</div>
+<!-- /.container-fluid -->
 
 
 
-            {% endblock %}
+{% endblock %} {% block additionalscripts %}
+<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.20/sorting/datetime-moment.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
 
+        $.fn.dataTable.moment('dd.MM.YYYY HH:mm');
 
+        var table = $('#tables').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{{ url_for('valuation_bp.data') }}",
+            //"aaSorting": [[5, "asc"]],
+            "columnDefs": [{
+                'orderData': [6],
+                'targets': [7]
 
-{% block additionalscripts %}
-    <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
-    <script src="//cdn.datatables.net/plug-ins/1.10.20/sorting/datetime-moment.js"></script>
-    <script type="text/javascript" charset="utf-8">
-    
-    $(document).ready(function () {
-        
-    $.fn.dataTable.moment('dd.MM.YYYY HH:mm');
-    
-      var table = $('#tables').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "ajax": "{{ url_for('valuation_bp.data') }}",
-        //"aaSorting": [[5, "asc"]],
-        "columnDefs": [ { 
-                            'orderData': [6], 
-                            'targets': [7]
-                            
-                        },
-                        {
-                            "targets": [6, 8],
-                            "visible": false,
-                            "searchable": false
-                        },
-                        {
-                            "targets": [6, 7, 8],
-                            "type" : "num-html"
+            }, {
+                "targets": [6, 8],
+                "visible": false,
+                "searchable": false
+            }, {
+                "targets": [6, 7, 8],
+                "type": "num-html"
+            }],
+            "order": [
+                [6, "desc"]
+            ],
+            'columns': [{
+                'data': '0'
+
+            }, {
+                'data': '1'
+
+            }, {
+                'data': '2'
+
+            }, {
+                'data': '3'
+
+            }, {
+                'data': '4'
+
+            }, {
+                'data': '5'
+
+            }, {
+                'data': '6'
+
+            }, {
+                'data': '7'
+
+            }, {
+                'data': '8'
+
+            }, {
+                'data': '9',
+                render: function(data, type, row) {
+                    if (data !== 'Hakuvirhe') {
+                        var abbr = "EUR";
+
+                        var symbol = "";
+                        if (abbr == "USD") {
+                            symbol = "$";
+
+                        } else if (abbr == "GBP") {
+                            symbol = "&pound;";
+
+                        } else if (abbr == "EUR") {
+                            symbol = "&euro;";
                         }
-                        ],
-        "order": [[ 6, "desc" ]],
-        'columns':[
-        {
-            'data':'0'
 
-        },
-        {
-            'data':'1'
-
-        },
-        {
-            'data':'2'
-
-        },
-        {
-            'data':'3'
-
-        },
-        {
-            'data':'4'
-
-        },
-        {
-            'data':'5'
-
-        },
-        {
-            'data':'6'
-
-        },
-        {
-            'data':'7'
-
-        },
-        {
-            'data':'8'
-
-        },
-        {
-            'data':'9',
-            render: function (data, type, row ) {
-                if(data !== 'Hakuvirhe'){
-                    var abbr = "EUR";
-          
-                    var symbol = "";              
-                    if(abbr == "USD"){
-                       symbol = "$";
-          
-                    } else if(abbr == "GBP"){
-                       symbol = "&pound;";
-          
-                    } else if(abbr == "EUR"){
-                       symbol = "&euro;";
+                        var num = $.fn.dataTable.render.number(' ', '.', 0).display(data);
+                        return num + ' ' + abbr;
+                    } else {
+                        return data;
                     }
-                    
-                    var num = $.fn.dataTable.render.number(' ', '.', 0).display(data);              
-                    return num + ' ' + abbr;           
-                 } else {           
-                    return data;
-                 }
-            }
-        }
-        ]
-        
-      });
+                }
+            }]
+
+        });
     });
-  </script>
+</script>
 
 {% endblock %}
-
