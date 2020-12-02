@@ -19,7 +19,6 @@ phases:
 artifacts:
   files: 
     - "**/*"
-  name: 
-    - "s3-to-s3-latest-build.zip" 
+  name: "s3-to-s3-latest-build.zip" 
 version: 0.1
 
