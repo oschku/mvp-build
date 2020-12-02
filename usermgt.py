@@ -55,8 +55,8 @@ def add_user(name, email, password, User, db):
         else:
             print(f"The email {email} already has a registered user!")
 
-name = 'Oskari Honkasalo'
-email = 'oskari.honkasalo@remax.fi'
-password = 'Fay_2020!'
+name = 'Rami Saarniaho'
+email = 'rami.saarniaho@growflow.fi'
+password = 'GrowFlow2020!'
 
 add_user(name, email, password, User, db)

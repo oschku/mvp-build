@@ -29,7 +29,10 @@ def dashboard():
     session.permanent = True
     data = db.session.query(UserInput).filter(text('user_input.user::integer = :user_id')).params(user_id = current_user.id)
     price_data = db.session.query(UserInput).with_entities(func.avg(UserInput.hinta)).filter(text('user_input.user::integer = :user_id')).params(user_id = current_user.id).first()[0]
-    price_data = format_currency(price_data, 'EUR', format=u'#,##0\xa0¤', locale='fi_FI', currency_digits=False)
+    if price_data:
+        price_data = format_currency(price_data, 'EUR', format=u'#,##0\xa0¤', locale='fi_FI', currency_digits=False)
+    else:
+        price_data = "Ei hakuja"
     return render_template(
         'dashboard.html',
         content_title='Dashboard',
