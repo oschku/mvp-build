@@ -18,6 +18,6 @@ phases:
       - "printf '[{"name":"your.task.definition.name","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json"
 artifacts:
   files: - '**/*'
-  name: s3-to-s3-latest-build.zip 
+  name: - "s3-to-s3-latest-build.zip" 
 version: 0.1
 
