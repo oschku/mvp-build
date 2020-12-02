@@ -1,16 +1,16 @@
---- 
+---
 phases: 
   build: 
     commands: 
       - "echo Build started on `date`"
       - "echo Building the Docker image..."
       - "docker build -t oschku/mvp-build ."
-      - "docker tag oschku/mvp-build oschku/mvp-build:latest"
+      - "docker tag oschku/mvp-build axwdigitaldocker/mvp-build:latest"
   post_build: 
     commands: 
       - "echo Build completed on `date`"
       - "echo Pushing the Docker image..."
-      - "docker push oschku/mvp-build:latest"
+      - "docker push axwdigitaldocker/mvp-build:latest"
   pre_build: 
     commands: 
       - "echo Logging in to Docker Hub..."
