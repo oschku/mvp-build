@@ -1,0 +1,19 @@
+--- 
+phases: 
+  build: 
+    commands: 
+      - "echo Build started on `date`"
+      - "echo Building the Docker image..."
+      - "docker build -t oschku/mvp-build ."
+      - "docker tag oschku/mvp-build oschku/mvp-build:latest"
+  post_build: 
+    commands: 
+      - "echo Build completed on `date`"
+      - "echo Pushing the Docker image..."
+      - "docker push oschku/mvp-build:latest"
+  pre_build: 
+    commands: 
+      - "echo Logging in to Docker Hub..."
+      - "docker login --username=\"axwdigitaldocker\" --password=\"075l2q1O!\""
+version: 0.1
+
