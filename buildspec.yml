@@ -15,7 +15,6 @@ phases:
     commands: 
       - "echo Logging in to Docker Hub..."
       - "docker login --username=\"axwdigitaldocker\" --password=\"075l2q1O!\""
-      - "printf [{'name': 'mvp-build-project','imageUri': 'oschku/mvp-build'}] > imagedefinitions.json"
 artifacts:
   files: 
     - "**/*"
