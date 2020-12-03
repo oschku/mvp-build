@@ -1,4 +1,4 @@
 [{
-    "name": "mvp-build-project",
+    "name": "flask-container",
     "imageUri": "oschku/mvp-build"
 }]
