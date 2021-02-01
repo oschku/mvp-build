@@ -50,6 +50,7 @@ valuation_bp = Blueprint(
 
 
 def user_input():
+    """Class returns input fields on the user page"""
 
     params = request.args.to_dict()
 
@@ -67,7 +68,7 @@ def user_input():
         # USER INPUT FORM AND VALUATION CALCULATION
         if form.validate() and form.is_submitted():
             query_id = randStr()
-
+            
             user_form_input = UserInput(
                 osoite = form.ui_osoite.data,
                 kunta = form.ui_kunta.data,
