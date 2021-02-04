@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from . import tm35
 
-p = Path(__file__).parents[1]
+p = str(Path(__file__).parents[1])
 
 dotenv_path = os.path.join(p, '.env')
 load_dotenv(dotenv_path)
@@ -44,7 +44,7 @@ env_dir = os.environ['WORK_DIR']
 if env_dir == 'docker':
     wdir  = '/app/project'
 elif env_dir == 'local':
-    wdir = 'E:/flask_valuation_app/app/project'
+    wdir = p
 
 pickle_files = ['output', 'housing_types', 'postnumbers'] # All files that use the pickle format
 DATA_DIR = wdir + "/data"
