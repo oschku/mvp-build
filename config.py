@@ -65,6 +65,6 @@ class Config:
     # Work-directory
     # WORK_DIR = get_env_variable('WORK_DIR')
     if osname == 'nt':
-        WORK_DIR = 'local'
+        os.environ['WORK_DIR'] = 'local'
     else:
-        WORK_DIR = 'docker'
+        os.environ['WORK_DIR'] = 'docker'
