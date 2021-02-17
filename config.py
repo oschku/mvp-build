@@ -11,6 +11,8 @@ basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, '.env'))
 
 
+osname = os.name
+
 
 
 
@@ -61,4 +63,8 @@ class Config:
     SESSION_TYPE = get_env_variable('SESSION_TYPE')
 
     # Work-directory
-    WORK_DIR = get_env_variable('WORK_DIR')
+    # WORK_DIR = get_env_variable('WORK_DIR')
+    if osname == 'nt':
+        os.environ['WORK_DIR'] = 'local'
+    else:
+        os.environ['WORK_DIR'] = 'docker'

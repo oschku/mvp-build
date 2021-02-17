@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(UserMixin, db.Model):
-	"""User account model."""
+	"""User account model. Created here after..."""
 
 	__tablename__ = 'flasklogin-users'
 	id = db.Column(

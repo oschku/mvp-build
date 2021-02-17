@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from . import tm35
 
-p = Path(__file__).parents[1]
+p = str(Path(__file__).parents[1])
 
 dotenv_path = os.path.join(p, '.env')
 load_dotenv(dotenv_path)
@@ -44,7 +44,7 @@ env_dir = os.environ['WORK_DIR']
 if env_dir == 'docker':
     wdir  = '/app/project'
 elif env_dir == 'local':
-    wdir = 'E:/flask_valuation_app/app/project'
+    wdir = p
 
 pickle_files = ['output', 'housing_types', 'postnumbers'] # All files that use the pickle format
 DATA_DIR = wdir + "/data"
@@ -623,7 +623,10 @@ class geodata():
         If a specific date is given as the 'date_time' input, then the CPI for that month.
     
         '''
-        URL = 'http://pxnet2.stat.fi/PXWeb/api/v1/fi/StatFin/hin/khi/kk/statfin_khi_pxt_11xl.px'
+        print('fetching latest cpi')
+        
+        URL = 'https://pxnet2.stat.fi:443/PXWeb/api/v1/fi/StatFin/hin/khi/kk/statfin_khi_pxt_11xl.px'
+        
         
         if optional_arg == 'date_time':
             today = date.today() - timedelta(45)
@@ -653,9 +656,44 @@ class geodata():
         
         r = requests.post(URL, data=params)
         r = r.json()
-        cpi_value = r['dataset']['value'][0]
+
+        try:
+            cpi_value = r['dataset']['value'][0]
+            return cpi_value
         
-        return cpi_value
+        
+        except:
+            if optional_arg == 'date_time':
+                today = date.today() - timedelta(60)
+                year = today.strftime("%Y")
+                month = today.strftime("%m")
+            else:
+                year = optional_arg.strftime("%Y")
+                month = optional_arg.strftime("%m")
+            
+            time_stamp = year + "M" + month
+            params = '''{
+            "query": [
+                {
+                "code": "Kuukausi",
+                "selection": {
+                    "filter": "item",
+                    "values": [    
+                    ''' + '''"''' + time_stamp +  '''"''' + '''
+                    ]
+                }
+                }
+            ],
+            "response": {
+                "format": "json-stat"
+            }
+            }'''
+            
+            r = requests.post(URL, data=params)
+            r = r.json()
+            result = r['dataset']['value'][0]
+            
+            return result
 
 
 
