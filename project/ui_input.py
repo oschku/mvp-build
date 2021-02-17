@@ -8,7 +8,6 @@ from .forms import UiForm
 from datetime import datetime as dt
 import random
 import string
-from .bin import valuation
 from sqlalchemy import text
 from datatables import ColumnDT, DataTables
 from decimal import Decimal

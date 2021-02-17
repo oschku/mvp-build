@@ -36,7 +36,6 @@ def create_app():
         from . import auth
         from . import ui_input
         from .assets import compile_static_assets
-        from .bin import valuation
 
         # Register Blueprints
         app.register_blueprint(routes.main_bp)
