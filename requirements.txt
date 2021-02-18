@@ -1,4 +1,5 @@
 # To ensure app dependencies are ported from your virtual environment/host machine into your container, run 'pip freeze > requirements.txt' in the terminal to overwrite this file
+psycopg2-binary
 babel==2.9.0
 click==7.1.2
 click-plugins==1.1.1
