@@ -17,11 +17,11 @@ import plotly.express as px
 import plotly.graph_objs as go
 from pathlib import Path
 import os
-import pandas as pd
 import json
 from statistics import mean
 from babel.numbers import format_currency
 import numpy as np
+import requests as r
 
 
 
@@ -50,8 +50,11 @@ valuation_bp = Blueprint(
 
 def user_input():
     """Class returns input fields on the user page"""
-
+    
     params = request.args.to_dict()
+    backend_url = os.environ['AWS_URL']
+    apiKey = os.environ['AWS_API_KEY']
+    
 
     if 'action' not in params:
         session.permanent = True
@@ -68,87 +71,41 @@ def user_input():
         if form.validate() and form.is_submitted():
             query_id = randStr()
             
-            user_form_input = UserInput(
-                osoite = form.ui_osoite.data,
-                kunta = form.ui_kunta.data,
-                postinumero = form.ui_postinumero.data,
-                asuntotyyppi = form.ui_asuntotyyppi.data,
-                asuinala = form.ui_asuinala.data,
-                rakennusvuosi = form.ui_rakennusvuosi.data,
-                huone_lkm = form.ui_huone_lkm.data,
-                kerros = form.ui_kerros.data,
-                kerros_yht = form.ui_kerros_yht.data,
-                kunto = form.ui_kunto.data,
-                tontti = form.ui_tontti.data,
-                vastike = form.ui_vastike.data,
-                vuokrattu = form.ui_vuokrattu.data,
-                hissi = form.ui_hissi.data,
-                sauna = form.ui_sauna.data,
-                parveke = form.ui_parveke.data,
-                tonttiala = form.ui_tonttiala.data,
-                muu_kerrosala = form.ui_muu_kerrosala.data,
-                created_on=dt.now(),
-                user=int(current_user.id),
-                query_id = query_id,
-                hinta = None,
-                lat = None,
-                lng = None)
-
-            db.session.add(user_form_input)
-            db.session.commit()
-
-            try:
-                hinta = valuation.calculate(UserInput, query_id)[0]
-                hinta = float(hinta)
-                hinta = round(hinta, -3)
-                lat,lng = valuation.geodata.geocode(form.ui_osoite.data, form.ui_kunta.data)
+            # NOTE For later purposes, remember to query for actual user no, is now set as 1 for testing purposes!
+            request_object = {
+                'osoite': form.ui_osoite.data,
+                'kunta' : form.ui_kunta.data,
+                'postinumero' : form.ui_postinumero.data,
+                'asuntotyyppi' : form.ui_asuntotyyppi.data,
+                'asuinala' : float(form.ui_asuinala.data),
+                'rakennusvuosi' : form.ui_rakennusvuosi.data,
+                'huone_lkm' : int(form.ui_huone_lkm.data),
+                'kerros' : form.ui_kerros.data,
+                'kerros_yht' : form.ui_kerros_yht.data,
+                'kunto' : form.ui_kunto.data,
+                'tontti' : form.ui_tontti.data,
+                'vastike' : form.ui_vastike.data,
+                'vuokrattu' : int(form.ui_vuokrattu.data),
+                'hissi' : int(form.ui_hissi.data),
+                'sauna' : int(form.ui_sauna.data),
+                'parveke' : int(form.ui_parveke.data),
+                'tonttiala' : form.ui_tonttiala.data,
+                'muu_kerrosala' : form.ui_muu_kerrosala.data,
+                'created_on': dt.now().strftime('%d.%m.%Y %H:%M:%S'),
+                'user':int(current_user.id),
+                'query_id' : query_id,
+                'user' : 1
+                }
 
             
-                
-                db.session.execute(
-                    text("UPDATE user_input SET hinta=:param2 WHERE query_id=:param1"),
-                    params = {"param2":hinta, "param1":query_id}
-                )
-                db.session.execute(
-                    text("UPDATE user_input SET lng=:param2 WHERE query_id=:param1"),
-                    params = {"param2":lng, "param1":query_id}
-                )
-                db.session.execute(
-                    text("UPDATE user_input SET lat=:param2 WHERE query_id=:param1"),
-                    params = {"param2":lat, "param1":query_id}
-                )
-                db.session.commit()
+
             
-            
-            except ValueError as V:
-                if V.args[1] == 'street':
-                    form.populate_obj(UserInput)
-                    flash('Osoite on virheellinen','street_err')
-                    print(V.args[1])
-                elif V.args[1] == 'country':
-                    form.populate_obj(UserInput)
-                    flash('Osoite on virheellinen','input_err')
-                    print(V.args[1])
-                elif V.args[1] == 'city':
-                    form.populate_obj(UserInput)
-                    flash( f'Kunnasta {form.ui_kunta.data} ei löytynyt osoitetta {form.ui_osoite.data}. Tarkista kunta','city_err')
-                    print(V.args[1])
-                    print(UserInput.osoite)
-                elif V.args[1] == 'bad_score':
-                    form.populate_obj(UserInput)
-                    flash( f'Osoitteella {form.ui_osoite.data} epäselvä osumatulos. Kokeile toista osoitetta','street_err')
-                    print(V.args[1])
-                    print(UserInput.osoite)
-                elif V.args[1] == 'multiple_streets':
-                    form.populate_obj(UserInput)
-                    flash( f'Osoitteella {form.ui_osoite.data} löytyi useita hakutuloksia. Tarkenna hakua','street_err')
-                    print(V.args[1])
-                    print(UserInput.osoite)
-                elif V.args[1] == 'no_streets':
-                    form.populate_obj(UserInput)
-                    flash( f'Osoite on virheellinen','street_err')
-                    print(V.args[1])
-                    print(UserInput.osoite)
+            request_object.update({'apiKey': apiKey})
+            #request_object =  {k: str(v).encode("utf-8") for k,v in request_object.items()}
+            request_data = r.get(url = backend_url, params=request_object)
+
+            form.populate_obj(UserInput)
+
                     
 
             return redirect('/valuation')
