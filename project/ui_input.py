@@ -22,6 +22,9 @@ from statistics import mean
 from babel.numbers import format_currency
 import numpy as np
 import requests as r
+import datetime
+import pytz
+
 
 
 
@@ -43,6 +46,17 @@ valuation_bp = Blueprint(
     static_folder='static'
 )
 
+# Timezone converter
+def convert_datetime_timezone(dt, tz1, tz2):
+    tz1 = pytz.timezone(tz1)
+    tz2 = pytz.timezone(tz2)
+
+    dt = datetime.datetime.strptime(dt,"%d.%m.%Y %H:%M:%S")
+    dt = tz1.localize(dt)
+    dt = dt.astimezone(tz2)
+    dt = dt.strftime("%d.%m.%Y %H:%M:%S")
+
+    return dt
 
 @valuation_bp.route('/valuation', methods=['GET', 'POST'])
 @login_required
@@ -201,7 +215,7 @@ def data():
 
     for item in rowTable.output_result()['data']:
         item['8'] = int((item['7'] - dt(1970, 1, 1)).total_seconds()) #UNIX Timestamp
-        item['7'] = str(item['7'].strftime("%d.%m.%Y %H:%M"))
+        item['7'] = convert_datetime_timezone(str(item['7'].strftime("%d.%m.%Y %H:%M:%S")), "UTC", "Europe/Helsinki")
         item['9'] = null_check(item['9'])
         
 
