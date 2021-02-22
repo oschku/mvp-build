@@ -53,6 +53,7 @@ def convert_datetime_timezone(dt, tz1, tz2):
 
     dt = datetime.datetime.strptime(dt,"%d.%m.%Y %H:%M:%S")
     dt = tz1.localize(dt)
+    print(dt)
     dt = dt.astimezone(tz2)
     dt = dt.strftime("%d.%m.%Y %H:%M:%S")
 
