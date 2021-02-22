@@ -3,7 +3,7 @@
 from flask import redirect, render_template, flash, Blueprint, request, url_for, session, jsonify, make_response
 from flask_login import current_user, login_required, logout_user
 from flask_paginate import Pagination, get_page_parameter
-from .models import db, UserInput, User
+from .models import db, UserInput, User, ApiKey
 from .forms import UiForm
 from datetime import datetime as dt
 import random
@@ -53,7 +53,7 @@ def user_input():
     
     params = request.args.to_dict()
     backend_url = os.environ['AWS_URL']
-    apiKey = os.environ['AWS_API_KEY']
+    apiKey = ApiKey.query.filter(text('api_keys.user_id::integer = :id')).params(id = current_user.id).all()[0].apikey
     
 
     if 'action' not in params:
@@ -93,8 +93,7 @@ def user_input():
                 'muu_kerrosala' : form.ui_muu_kerrosala.data,
                 'created_on': dt.now().strftime('%d.%m.%Y %H:%M:%S'),
                 'user':int(current_user.id),
-                'query_id' : query_id,
-                'user' : 1
+                'query_id' : query_id
                 }
 
             
@@ -102,9 +101,14 @@ def user_input():
             
             request_object.update({'apiKey': apiKey})
             #request_object =  {k: str(v).encode("utf-8") for k,v in request_object.items()}
-            request_data = r.get(url = backend_url, params=request_object)
+            request_object = r.get(url = backend_url, params=request_object)
+            request_data = request_object.json() 
 
-            form.populate_obj(UserInput)
+            if request_object.status_code == 406:
+                form.populate_obj(UserInput)
+                flash(request_data['message'], request_data['Error'])
+                print(request_data['message'])
+                
 
                     
 

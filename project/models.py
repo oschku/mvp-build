@@ -94,3 +94,8 @@ class UserInput(db.Model):
 	@property
 	def serialized(self):
 		return {'id': self.id}
+
+class ApiKey(db.Model):
+	__tablename__ = 'api_keys'
+	user_id = db.Column(db.Integer, primary_key = True)
+	apikey = db.Column(db.String(40), nullable=False)
