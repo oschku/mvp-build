@@ -14,13 +14,13 @@
             <div class="formwrapper">
                 <form action='/valuation' method='POST' autocomplete="off">
                     {{ form.csrf_token }} {% with messages = get_flashed_messages(with_categories=true) %}
-                    <div class="form-field_1">{{ form.ui_osoite.label}} {{form.ui_osoite(size=20, id=form.ui_osoite.name)}} {% if messages %} {% for category, message in messages %} {% if category == 'street_err' or category == 'input_err'%}
+                    <div class="form-field_1">{{ form.ui_osoite.label}} {{form.ui_osoite(size=20, id=form.ui_osoite.name)}} {% if messages %} {% for category, message in messages %} {% if category in ['number_error', 'street_error', 'bad_score', 'street_not_found', 'country_error']%}
                         <ul class=errors>
                             <li class="{{ category }}">{{ message }}</li>
                         </ul>
                         {% endif %} {% endfor %} {% endif %}
                     </div>
-                    <div class="form-field_1">{{ form.ui_kunta.label}} {{form.ui_kunta(id=form.ui_kunta.name)}} {% if messages %} {% for category, message in messages %} {% if category == 'city_err'%}
+                    <div class="form-field_1">{{ form.ui_kunta.label}} {{form.ui_kunta(id=form.ui_kunta.name)}} {% if messages %} {% for category, message in messages %} {% if category == 'city_error'%}
                         <ul class=errors>
                             <li class="{{ category }}">{{ message }}</li>
                         </ul>
